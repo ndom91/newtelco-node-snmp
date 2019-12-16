@@ -10,7 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "net-snmp": "^1.2.4"
+    "net-snmp": "^1.2.4",
+    "snmp-native": "^1.2.0"
   },
   "devDependencies": {
     "standard": "^14.3.1"

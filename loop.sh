@@ -2,5 +2,5 @@
 
 while true; do
 	/opt/newtelco/node-snmp/index.js
-  sleep 10;
+  sleep 5;
 done

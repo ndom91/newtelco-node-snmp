@@ -2,10 +2,12 @@
 
 // /usr/bin/snmpwalk -t '1' -r '3' -v2c -c n3wt3lco -Pud -OQUsn -M /mnt/data/observium/mibs/rfc:/mnt/data/observium/mibs/net-snmp 'udp':'192.168.11.223':'161' .1.3.6.1.4.1.17095.6
 
-const contactStatus = []
+// Get Data
 const snmp = require('snmp-native')
-const session = new snmp.Session({ host: '192.168.11.223', community: 'n3wt3lco' })
+const TelegramBot = require('node-telegram-bot-api')
 
+const session = new snmp.Session({ host: '192.168.11.223', community: 'n3wt3lco' })
+const contactStatus = []
 session.getSubtree({ oid: [1, 3, 6, 1, 4, 1, 17095, 6] }, function (error, varbinds) {
   if (error) {
     console.log('Fail :(')
@@ -25,4 +27,29 @@ session.getSubtree({ oid: [1, 3, 6, 1, 4, 1, 17095, 6] }, function (error, varbi
   }
   console.log(JSON.stringify(contactStatus))
   session.close()
+})
+
+// Notification
+contactStatuss.forEach(contact => {
+  if (contact.value !== 'OK') {
+    const token = '842082296:AAEMAu6MIr9Y-tOhs5vWrL89p4JyK2T_64Q'
+    const chatIds = [
+      '211746862', // gbormet
+      '497637886' // ndomino
+    ]
+
+    const bot = new TelegramBot(token, { polling: false })
+
+    const telegrambot = (message, json) => {
+      chatIds.forEeach(chatId => {
+        try {
+          bot.sendMessage(chatId, `${contact.name} has become ${contact.value} at ${Date.now().toString()}`, {
+            parse_mode: 'html'
+          })
+        } catch (err) {
+          console.log('Something went wrong when trying to send a Telegram notification', err)
+        }
+      })
+    }
+  }
 })

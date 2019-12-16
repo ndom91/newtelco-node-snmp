@@ -4,7 +4,7 @@ Newtelco SNMP Worker designed to check dry contact environment sensors faster th
 
 ## Design
 
-Currently it checks via SNMP all attached dry contacts to the [ServersCheck]() platform.
+Currently it checks via SNMP all attached dry contacts to the [ServersCheck](https://serverscheck.com/sensors/sensor_io_drycontact.asp) platform.
 
 It then compares if anything has changed since the last check, and if so - alerts users via Telegram.
 

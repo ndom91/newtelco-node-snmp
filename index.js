@@ -5,6 +5,7 @@
 // Get Data
 const snmp = require('snmp-native')
 const TelegramBot = require('node-telegram-bot-api')
+const Intl = require('intl')
 
 const session = new snmp.Session({ host: '192.168.11.223', community: 'n3wt3lco' })
 const contactStatus = []
@@ -44,9 +45,10 @@ session.getSubtree({ oid: [1, 3, 6, 1, 4, 1, 17095, 6] }, function (error, varbi
       const telegrambot = (message, json) => {
         chatIds.forEach(chatId => {
           console.log(chatId)
-          const date = new Date()
+          const df = new Intl.DateTimeFormat('de-DE', { day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' })
+          const dateDE = df.format(new Date())
           try {
-            bot.sendMessage(chatId, `${contact.name} has become ${contact.value} at ${date.toISOString()}`, {
+            bot.sendMessage(chatId, `<b>${contact.name}</b> has become <b>${contact.value}</b> at ${dateDE}`, {
               parse_mode: 'html'
             })
           } catch (err) {

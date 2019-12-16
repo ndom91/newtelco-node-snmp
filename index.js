@@ -21,35 +21,41 @@ session.getSubtree({ oid: [1, 3, 6, 1, 4, 1, 17095, 6] }, function (error, varbi
       if (!vb1.value.includes('Undefine')) {
         const sensorName = vb1.value
         const sensorValue = vb2.value
+        // console.log(sensorName, sensorValue)
         contactStatus.push({ name: sensorName, value: sensorValue })
       }
     }
   }
-  console.log(JSON.stringify(contactStatus))
+  // console.log(JSON.stringify(contactStatus))
   session.close()
-})
 
-// Notification
-contactStatuss.forEach(contact => {
-  if (contact.value !== 'OK') {
-    const token = '842082296:AAEMAu6MIr9Y-tOhs5vWrL89p4JyK2T_64Q'
-    const chatIds = [
-      '211746862', // gbormet
-      '497637886' // ndomino
-    ]
+  // Notification
+  contactStatus.forEach(contact => {
+    if (contact.value !== 'OK') {
+      console.log('ALERT: ', contact)
+      const token = '842082296:AAEMAu6MIr9Y-tOhs5vWrL89p4JyK2T_64Q'
+      const chatIds = [
+        '211746862', // gbormet
+        '497637886' // ndomino
+      ]
 
-    const bot = new TelegramBot(token, { polling: false })
+      const bot = new TelegramBot(token, { polling: false })
 
-    const telegrambot = (message, json) => {
-      chatIds.forEeach(chatId => {
-        try {
-          bot.sendMessage(chatId, `${contact.name} has become ${contact.value} at ${Date.now().toString()}`, {
-            parse_mode: 'html'
-          })
-        } catch (err) {
-          console.log('Something went wrong when trying to send a Telegram notification', err)
-        }
-      })
+      const telegrambot = (message, json) => {
+        chatIds.forEach(chatId => {
+          console.log(chatId)
+          const date = new Date()
+          try {
+            bot.sendMessage(chatId, `${contact.name} has become ${contact.value} at ${date.toISOString()}`, {
+              parse_mode: 'html'
+            })
+          } catch (err) {
+            console.log('Something went wrong when trying to send a Telegram notification', err)
+          }
+        })
+      }
+
+      telegrambot()
     }
-  }
+  })
 })

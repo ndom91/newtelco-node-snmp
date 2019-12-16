@@ -6,6 +6,8 @@
 const snmp = require('snmp-native')
 const TelegramBot = require('node-telegram-bot-api')
 const Intl = require('intl')
+const NodeCache = require('node-cache')
+const lastValues = new NodeCache()
 
 const session = new snmp.Session({ host: '192.168.11.223', community: 'n3wt3lco' })
 const contactStatus = []
@@ -24,6 +26,7 @@ session.getSubtree({ oid: [1, 3, 6, 1, 4, 1, 17095, 6] }, function (error, varbi
         const sensorValue = vb2.value
         // console.log(sensorName, sensorValue)
         contactStatus.push({ name: sensorName, value: sensorValue })
+        lastValues.set(sensorName, sensorValue, 10000)
       }
     }
   }
@@ -32,7 +35,9 @@ session.getSubtree({ oid: [1, 3, 6, 1, 4, 1, 17095, 6] }, function (error, varbi
 
   // Notification
   contactStatus.forEach(contact => {
-    if (contact.value !== 'OK') {
+    const previousValue = lastValues.get(contact.name)
+    if (contact.value !== previousValue) {
+    // if (contact.value !== 'OK') {
       console.log('ALERT: ', contact)
       const token = '842082296:AAEMAu6MIr9Y-tOhs5vWrL89p4JyK2T_64Q'
       const chatIds = [

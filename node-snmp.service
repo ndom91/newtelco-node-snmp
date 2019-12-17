@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/opt/newtelco/node-snmp/index.js
+ExecStart=/opt/newtelco/node-snmp/loop.sh
 Restart=always
 User=ndo
 

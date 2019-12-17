@@ -1,9 +1,9 @@
 #!/usr/bin/node
 process.env.NTBA_FIX_319 = 1
 
+// EXAMPLE COMMAND:
 // /usr/bin/snmpwalk -t '1' -r '3' -v2c -c n3wt3lco -Pud -OQUsn -M /mnt/data/observium/mibs/rfc:/mnt/data/observium/mibs/net-snmp 'udp':'192.168.11.223':'161' .1.3.6.1.4.1.17095.6
 
-// Get Data
 const snmp = require('snmp-native')
 const TelegramBot = require('node-telegram-bot-api')
 const Intl = require('intl')
@@ -42,7 +42,7 @@ session.getSubtree({ oid: [1, 3, 6, 1, 4, 1, 17095, 6] }, function (error, varbi
 })
 
 const alertUser = (name, value) => {
-  const token = '842082296:AAEMAu6MIr9Y-tOhs5vWrL89p4JyK2T_64Q'
+  const token = '842082296:AAEMAu6MIr9Y-tOhs5vWrL89p4JyK2T_64Q' // Newtelco Alert Bot
   const chatIds = [
     '211746862', // gbormet
     '497637886' // ndomino
@@ -52,7 +52,6 @@ const alertUser = (name, value) => {
 
   const telegrambot = (message, json) => {
     chatIds.forEach(chatId => {
-      // console.log(chatId)
       const df = new Intl.DateTimeFormat('de-DE', { day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' })
       const dateDE = df.format(new Date())
       try {
@@ -64,6 +63,5 @@ const alertUser = (name, value) => {
       }
     })
   }
-
   telegrambot()
 }

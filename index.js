@@ -8,6 +8,7 @@ const snmp = require('snmp-native')
 const TelegramBot = require('node-telegram-bot-api')
 const Intl = require('intl')
 const storage = require('node-persist')
+const nodemailer = require('nodemailer')
 storage.init()
 
 const session = new snmp.Session({ host: '192.168.11.223', community: 'n3wt3lco' })
@@ -49,14 +50,37 @@ const alertUser = (name, value) => {
   ]
 
   const bot = new TelegramBot(token, { polling: false })
+  const transport = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    auth: {
+      user: 'device@newtelco.de',
+      pass: 'N3wt3lco'
+    }
+  })
 
   const telegrambot = (message, json) => {
     chatIds.forEach(chatId => {
       const df = new Intl.DateTimeFormat('de-DE', { day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' })
       const dateDE = df.format(new Date())
       try {
+        // Telegram
         bot.sendMessage(chatId, `<b>${name}</b> has become <b>${value}</b> at ${dateDE}`, {
           parse_mode: 'html'
+        })
+        // Email (SMTP)
+        const message = {
+          from: 'alert@newtelco.de',
+          to: 'gbormet@newtelco.de; ndomino@newtelco.de',
+          subject: `ALERT ${name} - ${value}`,
+          text: `Your contact ${name} has changed status to ${value} at ${dateDE}`
+        }
+        transport.sendMail(message, function (err, info) {
+          if (err) {
+            console.log(err)
+          } else {
+            console.log(info)
+          }
         })
       } catch (err) {
         console.log('Something went wrong when trying to send a Telegram notification', err)

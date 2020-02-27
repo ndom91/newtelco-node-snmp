@@ -27,9 +27,8 @@ session.getSubtree({ oid: [1, 3, 6, 1, 4, 1, 17095, 6] }, function (
     for (let i = 0; i < varbinds.length; i += 3) {
       const vb1 = varbinds[i]
       const vb2 = varbinds[i + 1]
-      //   const vb3 = varbinds[i + 2]
 
-      if (!vb1.value.includes('Undefine')) {
+      if (!vb1.value.includes('Undefine') || !vb2.value.includes('Undefine')) {
         const sensorName = vb1.value
         const sensorValue = vb2.value
 
@@ -46,6 +45,7 @@ session.getSubtree({ oid: [1, 3, 6, 1, 4, 1, 17095, 6] }, function (
               alertUser(sensorName, sensorValue)
             }
             contactStatus.push({ name: sensorName, value: sensorValue })
+            console.log(sensorName, sensorValue)
             storage.setItem(sensorName, sensorValue)
           })
           .catch(err => console.error(err))
@@ -72,7 +72,7 @@ const alertUser = (name, value) => {
     }
   })
 
-  const telegrambot = (message, json) => {
+  const notify = (message, json) => {
     chatIds.forEach(chatId => {
       const df = new Intl.DateTimeFormat('de-DE', {
         day: 'numeric',
@@ -113,6 +113,6 @@ const alertUser = (name, value) => {
         )
       }
     })
-  };
-  telegrambot()
-};
+  }
+  console.log(notify())
+}

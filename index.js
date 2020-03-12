@@ -143,7 +143,7 @@ const alertUser = (name, value) => {
           to: 'gbormet@newtelco.de',
           cc: 'mleidemer@newtelco.de',
           subject: `ALERT ${name} - ${value}`,
-          text: `Your contact ${name} has changed status to ${value} at ${dateDE}`
+          text: `Your sensor ${name} has changed to ${value} at ${dateDE}`
         }
         transport.sendMail(message, function (err, info) {
           if (err) {

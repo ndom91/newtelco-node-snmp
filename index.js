@@ -2,7 +2,7 @@
 process.env.NTBA_FIX_319 = 1
 
 // EXAMPLE COMMAND:
-// /usr/bin/snmpwalk -t '1' -r '3' -v2c -c n3wt3lco -Pud -OQUsn -M /mnt/data/observium/mibs/rfc:/mnt/data/observium/mibs/net-snmp 'udp':'192.168.11.223':'161' .1.3.6.1.4.1.17095.6
+// /usr/bin/snmpwalk -t '1' -r '3' -v2c -c n3wt3lco -Pud -OQUsn -M /mnt/data/observium/mibs/rfc:/mnt/data/observium/mibs/net-snmp 'udp':'172.16.60.73':'161' .1.3.6.1.4.1.17095.6
 
 require('dotenv').config()
 const snmp = require('snmp-native')
@@ -12,48 +12,92 @@ const storage = require('node-persist')
 const nodemailer = require('nodemailer')
 storage.init()
 
-const session = new snmp.Session({
-  host: process.env.TARGET_HOST,
-  community: process.env.TARGET_COMMUNITY
-})
-const contactStatus = []
-session.getSubtree({ oid: [1, 3, 6, 1, 4, 1, 17095, 6] }, function (
-  error,
-  varbinds
-) {
-  if (error) {
-    console.log(`Fail - ${error}`)
-  } else {
-    for (let i = 0; i < varbinds.length; i += 3) {
-      const vb1 = varbinds[i]
-      const vb2 = varbinds[i + 1]
+const interval = setInterval(() => {
 
-      if (!vb1.value.includes('Undefine') || !vb2.value.includes('Undefine')) {
-        const sensorName = vb1.value
-        const sensorValue = vb2.value
+  // Contacts
+  const session = new snmp.Session({
+    host: process.env.TARGET_HOST,
+    community: process.env.TARGET_COMMUNITY
+  })
+  const contactStatus = []
+  session.getSubtree({ oid: [1, 3, 6, 1, 4, 1, 17095, 6] }, function (
+    error,
+    varbinds
+  ) {
+    if (error) {
+      console.log(`Fail - ${error}`)
+    } else {
+      for (let i = 0; i < varbinds.length; i += 3) {
+        const vb1 = varbinds[i]
+        const vb2 = varbinds[i + 1]
 
-        storage
-          .getItem(sensorName)
-          .then(previousValue => {
-            if (sensorValue !== previousValue) {
-              console.log(
-                sensorName,
-                previousValue,
-                sensorValue,
-                new Date().toLocaleString()
-              )
-              alertUser(sensorName, sensorValue)
-            }
-            contactStatus.push({ name: sensorName, value: sensorValue })
-            console.log(sensorName, sensorValue)
-            storage.setItem(sensorName, sensorValue)
-          })
-          .catch(err => console.error(err))
+        if (!vb1.value.includes('Undefine') || !vb2.value.includes('Undefine')) {
+          const sensorName = vb1.value
+          const sensorValue = vb2.value
+
+          storage
+            .getItem(sensorName)
+            .then(previousValue => {
+              if (sensorValue !== previousValue) {
+                console.log(
+                  sensorName,
+                  previousValue,
+                  sensorValue,
+                  new Date().toLocaleString()
+                )
+                alertUser(sensorName, sensorValue)
+              }
+              contactStatus.push({ name: sensorName, value: sensorValue })
+              // console.log(sensorName, sensorValue)
+              storage.setItem(sensorName, sensorValue)
+            })
+            .catch(err => console.error(err))
+        }
       }
     }
-  }
-  session.close()
-})
+    session.close()
+  })
+
+  // Temperature
+  // .1.3.6.1.4.1.17095.1000.1.3.0 = "23.74"
+
+  const sessionTemp = new snmp.Session({
+    host: process.env.TARGET_HOST,
+    community: process.env.TARGET_COMMUNITY
+  })
+  sessionTemp.get({ oid: [1, 3, 6, 1, 4, 1, 17095, 1000, 1, 3, 0] }, function (
+    error,
+    varbind
+  ) {
+    if (error) {
+      console.log(`Fail - ${error}`)
+    } else {
+      const temp = varbind[0].value
+      if (temp && temp > 25) {
+        console.log(`Temp Alert - ${temp}`)
+
+        storage
+          .getItem('b01003-temp')
+          .then(previousValue => {
+            if (previousValue !== 'alert') {
+              alertUser('B01.003 Temp', temp)
+              console.log('Temp - Alert')
+              storage.setItem('b01003-temp', 'alert')
+            }
+          })
+      } else {
+        storage
+          .getItem('b01003-temp')
+          .then(previousValue => {
+            if (previousValue === 'alert') {
+              storage.setItem('b01003-temp', 'normal')
+              console.log('Temp - Return to Normal')
+            }
+          })
+      }
+    }
+  })
+}, 5000);
 
 const alertUser = (name, value) => {
   const token = process.env.TELEGRAM_TOKEN // Newtelco Alert Bot
@@ -103,7 +147,8 @@ const alertUser = (name, value) => {
           if (err) {
             console.log(err)
           } else {
-            console.log(info)
+            // Success!
+            // console.log(info)
           }
         })
       } catch (err) {
@@ -114,5 +159,5 @@ const alertUser = (name, value) => {
       }
     })
   }
-  console.log(notify())
+  notify()
 }

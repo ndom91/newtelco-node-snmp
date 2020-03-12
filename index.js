@@ -80,7 +80,7 @@ const interval = setInterval(() => {
           .getItem('b01003-temp')
           .then(previousValue => {
             if (previousValue !== 'alert') {
-              alertUser('B01.003 Temp', temp)
+              alertUser('B01.003 Temp ALERT', temp)
               console.log('Temp - Alert')
               storage.setItem('b01003-temp', 'alert')
             }
@@ -90,6 +90,7 @@ const interval = setInterval(() => {
           .getItem('b01003-temp')
           .then(previousValue => {
             if (previousValue === 'alert') {
+              alertUser('B01.003 Temp Normalize', temp)
               storage.setItem('b01003-temp', 'normal')
               console.log('Temp - Return to Normal')
             }

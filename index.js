@@ -141,6 +141,7 @@ const alertUser = (name, value) => {
         const message = {
           from: 'alert@newtelco.de',
           to: 'gbormet@newtelco.de',
+          cc: 'mleidemer@newtelco.de',
           subject: `ALERT ${name} - ${value}`,
           text: `Your contact ${name} has changed status to ${value} at ${dateDE}`
         }

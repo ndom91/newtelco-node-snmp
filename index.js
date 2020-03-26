@@ -97,6 +97,7 @@ const interval = setInterval(() => {
           })
       }
     }
+    sessionTemp.close()
   })
 }, 5000);
 

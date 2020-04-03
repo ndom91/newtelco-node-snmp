@@ -73,7 +73,7 @@ const interval = setInterval(() => {
       console.log(`Fail - ${error}`)
     } else {
       const temp = varbind[0].value
-      if (temp && temp > 25) {
+      if (temp && temp > 26) {
         console.log(`Temp Alert - ${temp}`)
 
         storage

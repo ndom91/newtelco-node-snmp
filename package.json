@@ -1,6 +1,6 @@
 {
   "name": "newtelco-snmp",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Newtelco SNMP Checker",
   "main": "index.js",
   "scripts": {
@@ -16,7 +16,7 @@
     "intl": "^1.2.5",
     "node-persist": "^3.0.5",
     "node-telegram-bot-api": "^0.40.0",
-    "nodemailer": "^6.4.2",
+    "nodemailer": "^6.4.6",
     "snmp-native": "^1.2.0"
   },
   "devDependencies": {

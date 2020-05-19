@@ -40,4 +40,4 @@ Create a `config.json` file with the following contents and pass the filename as
 
 ## Usage
 
-`npx node-snmp config.json`
+`npx newtelco-snmp config.json`

@@ -1,0 +1,24 @@
+{
+  "hosts": [
+    {
+      "address": "",
+      "label": "",
+      "community": ""
+    }
+  ],
+  "alerts": {
+    "email": {
+      "host": "",
+      "port": "",
+      "from": "",
+      "user": "",
+      "pw": "",
+      "to": ["", ""]
+    },
+    "telegram": {
+      "token": "",
+      "people": ["", ""]
+    }
+  }
+}
+

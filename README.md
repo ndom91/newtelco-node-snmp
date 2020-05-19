@@ -12,6 +12,36 @@ It then compares if anything has changed since the last check, and if so - alert
 
 There is a quick n' dirty script (`loop.sh`) included in the repo for testing - but I recommend using the systemd service file when running it in production.
 
+## Config
 
+Create a `config.json` file with the following contents and pass the filename as the first argument to the application.
 
+```json 
+{
+  "hosts": [
+    {
+      "address": "",
+      "label": "",
+      "community": ""
+    }
+  ],
+  "alerts": {
+    "email": {
+      "host": "",
+      "port": "",
+      "from": "",
+      "user": "",
+      "pw": "",
+      "to": ["", ""]
+    },
+    "telegram": {
+      "token": "",
+      "people": ["", ""]
+    }
+  }
+}
+```
 
+## Usage
+
+`npx node-snmp config.json`

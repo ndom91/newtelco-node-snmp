@@ -1,2 +1,4 @@
-monitor-dashboard/*
+monitor-dashboard
 config.json
+.node-persist/*
+.env*

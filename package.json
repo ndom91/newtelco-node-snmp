@@ -1,8 +1,9 @@
 {
   "name": "newtelco-snmp",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Newtelco SNMP Checker",
   "main": "index.js",
+  "bin": "./index.js",
   "scripts": {
     "start": "node index.js"
   },

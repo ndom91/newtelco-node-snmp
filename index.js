@@ -1,4 +1,4 @@
-#!/usr/bin/node
+#!/usr/bin/env node
 process.env.NTBA_FIX_319 = 1
 
 // EXAMPLE COMMAND:

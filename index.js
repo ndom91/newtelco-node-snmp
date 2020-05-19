@@ -4,7 +4,6 @@ process.env.NTBA_FIX_319 = 1
 // EXAMPLE COMMAND:
 // /usr/bin/snmpwalk -t '1' -r '3' -v2c -c n3wt3lco -Pud -OQUsn -M /mnt/data/observium/mibs/rfc:/mnt/data/observium/mibs/net-snmp 'udp':'172.16.60.73':'161' .1.3.6.1.4.1.17095.6
 
-require('dotenv').config()
 const snmp = require('snmp-native')
 const TelegramBot = require('node-telegram-bot-api')
 const Intl = require('intl')
@@ -108,10 +107,6 @@ setInterval(() => {
 const alertUser = (name, value) => {
   const token = configData.alerts.telegram.token // Newtelco Alert Bot
   const chatIds = configData.alerts.telegram.people
-  // [
-  //   process.env.TELEGRAM_CHAT1, // gbormet
-  //   process.env.TELEGRAM_CHAT2 // ndomino
-  // ]
 
   const bot = new TelegramBot(token, { polling: false })
   const transport = nodemailer.createTransport({
